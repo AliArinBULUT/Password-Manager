@@ -177,6 +177,8 @@ void Update_Password(string label){
             getline(cin, new_password);
             lines[i] = label + " " + toHex(xorEncryption(new_password));
             found = true;
+            file.close();
+            file.open(path);
             break;
         }
     }
