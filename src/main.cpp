@@ -36,7 +36,7 @@ int main(){
         cout << "Enter a Master Key: ";
         string Master_Key;
         getline(cin, Master_Key);
-        Update_File("Master Key:", Master_Key);
+        Update_File("Master Key", Master_Key);
         if (file.is_open())
             file.close();
         file.open(path);
@@ -48,6 +48,11 @@ int main(){
         cout << "Enter the Master Key: ";
         getline(cin, Input_Key);
         tries += 1;
+    }
+
+    if (tries == 3){
+        cout << "Wrong Master Key";
+        exit_program = true;
     }
 
     while(!exit_program){
@@ -66,7 +71,7 @@ bool Check_Master_Key_Presence(){
 
     string first_line;
     if (getline(file, first_line))
-        return first_line.find("Master Key:") != string::npos;
+        return first_line.find("Master Key") != string::npos;
     else
         return false;
 }
@@ -76,7 +81,7 @@ bool Master_Key_Match(string& Input_Key){
     file.seekg(0);
     string first_line;
     getline(file, first_line);
-    string find_text {"Master Key:"};
+    string find_text {"Master Key"};
     size_t pos = first_line.find(find_text);
     string Master_Key = first_line.substr(pos + find_text.length() + 1);
     if (Master_Key == toHex(xorEncryption(Input_Key)))
@@ -134,7 +139,9 @@ void Menu(){
             break;
         }
         case 4: {
-
+            Update_Password("Master Key");
+            file.close();
+            file.open(path);
             break;
         }
         case 9: {
@@ -149,7 +156,7 @@ void Menu(){
 void Update_File (string label, string unencrypted_text){
     file.close();
     file.open(path);
-    if (label == "Master Key:"){
+    if (label == "Master Key"){
         file << label << " " << toHex(xorEncryption(unencrypted_text)) << "\n\n";
     }
     else{
@@ -169,9 +176,8 @@ void Update_Password(string label){
     while (getline(file, line))
         lines.push_back(line);
 
-    for (size_t i = 2; i < lines.size(); ++i){
-        size_t pos = lines[i].find(label + " ");
-        if (pos == 0){
+    for (size_t i = 0; i < lines.size(); ++i){
+        if (lines[i].find(label) == 0){
             cout << "Enter the new password: ";
             string new_password;
             getline(cin, new_password);
