@@ -37,9 +37,7 @@ int main(){
         string Master_Key;
         getline(cin, Master_Key);
         Update_File("Master Key", Master_Key);
-        if (file.is_open())
-            file.close();
-        file.open(path);
+        file.flush();
     }
 
     string Input_Key;
@@ -106,8 +104,6 @@ void Menu(){
             string password;
             getline(cin, password);
             Update_File(label, password);
-            file.close();
-            file.open(path);
             break;
         }
         case 2: {
@@ -134,14 +130,11 @@ void Menu(){
             string label {""};
             getline(cin, label);
             Update_Password(label);
-            file.close();
-            file.open(path);
             break;
         }
         case 4: {
             Update_Password("Master Key");
-            file.close();
-            file.open(path);
+            file.flush();
             break;
         }
         case 9: {
@@ -163,12 +156,11 @@ void Update_File (string label, string unencrypted_text){
         file.seekp(0, std::ios::end);
         file << label << " " << toHex(xorEncryption(unencrypted_text)) << "\n";
     }
-    file.close();
+    file.flush();
 }
 
 void Update_Password(string label){
-    file.close();
-    file.open(path);
+    file.flush();
     std::vector <string> lines;
     string line;
     bool found = false;
@@ -196,7 +188,6 @@ void Update_Password(string label){
 
     for (const auto& line: lines)
         file << line << "\n";
-    file.close();
 }
 
 string xorEncryption(string& text){
